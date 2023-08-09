@@ -3,11 +3,12 @@ import asyncio
 from fastapi import APIRouter, Depends, WebSocket
 from websockets.exceptions import ConnectionClosedOK
 
-from app.api import deps
-from app.api.api_v1.endpoints.tasks import get_tasks
+from app.api.api_v1.endpoints.tasks.get import get_tasks
 from app.api.api_v1.endpoints.users import info
+from app.core import deps
 from app.schemas.users import UserSchema
-from app.services.tasks import TasksService
+from app.services.tasks.subscribers import SubscribersService
+from app.services.tasks.views import ViewsService
 
 router = APIRouter()
 
@@ -31,8 +32,8 @@ async def websocket_user(
 async def websocket_get_tasks(
     websocket: WebSocket,
     current_user: UserSchema = Depends(deps.ws_get_current_user),
-    views_service: TasksService = Depends(deps.views_tasks_service),
-    subscribers_service: TasksService = Depends(deps.subscribers_tasks_service),
+    views_service: ViewsService = Depends(deps.views_service),
+    subscribers_service: SubscribersService = Depends(deps.subscribers_service),
 ):
     await websocket.accept()
     try:

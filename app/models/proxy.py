@@ -27,5 +27,5 @@ class Proxy(Base):
             ip=self.ip,
             port=self.port,
             username=self.username,
-            password=self.password
+            password=self.password,
         )

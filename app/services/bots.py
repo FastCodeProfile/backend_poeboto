@@ -16,9 +16,9 @@ class BotsService:
         bots = await self.bots_repo.find_all()
         return bots
 
-    async def update_bot(self, bot):
-        await self.bots_repo.update_bot(bot)
+    async def update_bot(self, bot, last_call: bool = False):
+        await self.bots_repo.update_bot(bot, last_call)
 
-    async def get_bots_for_working(self, skip_bots: int = 0):
-        bots = await self.bots_repo.find_bots_for_working(skip_bots)
+    async def get_bots_for_working(self):
+        bots = await self.bots_repo.find_bots_for_working()
         return bots

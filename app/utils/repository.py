@@ -37,9 +37,7 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def find_all(self, where_clause=None, by=None):
         async with async_session_maker() as session:
-            stmt = select(self.model).where(where_clause)
-            if by:
-                stmt.order_by(by)
+            stmt = select(self.model).where(where_clause).order_by(by)
             res = await session.execute(stmt)
             res = [row[0] for row in res.all()]
             return res

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
-from app.api import deps
+from app.core import deps
 from app.core.security import (create_access_token, get_password_hash,
                                verify_password)
 from app.schemas.users import UserSchema, UserSchemaAdd, UserTokenSchema

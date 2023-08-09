@@ -9,9 +9,11 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from app.core.config import settings
 from app.db.db import Base
 from app.models.users import Users
-from app.models.tasks import SubscribersTasks, ViewsSchema
+from app.models.tasks.views import ViewsTask
+from app.models.tasks.subscribers import SubscribersTask
 from app.models.bots import Bots
 from app.models.proxy import Proxy
+from app.models.skip_bots import SkipBots
 
 
 config = context.config

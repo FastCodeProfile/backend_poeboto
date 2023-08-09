@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from app.api import deps
+from app.core import deps
 from app.schemas.bots import BotSchema, BotSchemaAdd
 from app.services.bots import BotsService
 

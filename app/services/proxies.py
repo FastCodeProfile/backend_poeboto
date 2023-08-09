@@ -1,4 +1,4 @@
-from httpx import AsyncClient, ReadTimeout, ConnectTimeout, ConnectError
+from httpx import AsyncClient, ConnectError, ConnectTimeout, ReadTimeout
 
 from app.repositories.proxies import ProxiesRepository
 from app.schemas.proxies import ProxySchemaAdd

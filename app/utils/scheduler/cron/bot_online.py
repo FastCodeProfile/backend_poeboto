@@ -1,16 +1,13 @@
 from loguru import logger
 
+from app.core import deps
 from app.models.proxy import Proxy
-from app.repositories.bots import BotsRepository
-from app.repositories.proxies import ProxiesRepository
-from app.services.bots import BotsService
-from app.services.proxies import ProxiesService
 from app.utils.telegram.client import Telegram
 
 
 class BotOnline:
-    bots_service = BotsService(BotsRepository)
-    proxies_service = ProxiesService(ProxiesRepository)
+    bots_service = deps.bots_service()
+    proxies_service = deps.proxies_service()
 
     async def run_set_online(self, ctx):
         proxies = await self.proxies_service.get_proxies_for_working()
@@ -25,7 +22,7 @@ class BotOnline:
         await self.proxies_service.proxies_repo.take(proxy.id)
 
         bots = await self.bots_service.get_bots_for_working()
-        bots_limit = int(len(bots)*0.2)
+        bots_limit = int(len(bots) * 0.2)
 
         for bot in bots[:bots_limit]:
             if not await self.proxies_service.rotation(proxy):

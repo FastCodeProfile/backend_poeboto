@@ -9,21 +9,21 @@ from app.utils.repository import SQLAlchemyRepository
 class BotsRepository(SQLAlchemyRepository):
     model = Bots
 
-    async def update_bot(self, bot):
+    async def update_bot(self, bot, last_call: bool = False):
         bot_dict = bot.model_dump()
-        bot_dict["last_call"] = dt.now()
+        if last_call:
+            bot_dict["last_call"] = dt.now()
         await self.update(bot_dict, self.model.id == bot.id)
 
     async def find_by_id(self, bot_id: int):
         bot = await self.find_one(self.model.id == bot_id)
         return bot
 
-    async def find_bots_for_working(self, skip_bots: int):
+    async def find_bots_for_working(self):
         bots = await self.find_all(
             and_(
                 self.model.ban.is_(False),
-                self.model.busy.is_(True),
-                self.model.id > skip_bots,
+                self.model.busy.is_(False),
             ),
             self.model.last_call,
         )

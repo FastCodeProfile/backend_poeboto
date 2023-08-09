@@ -23,8 +23,9 @@ class ProxiesRepository(SQLAlchemyRepository):
         await self.update({"work": False}, self.model.id == proxy_id)
 
     async def find_for_working(self):
-        proxies = await self.find_all(and_(self.model.busy.is_(False),
-                                           self.model.work.is_(True)))
+        proxies = await self.find_all(
+            and_(self.model.busy.is_(False), self.model.work.is_(True))
+        )
         return proxies
 
     async def find_non_working(self):

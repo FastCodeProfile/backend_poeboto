@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from app.api import deps
+from app.core import deps
 from app.schemas.proxies import ProxySchema, ProxySchemaAdd
 from app.services.proxies import ProxiesService
 

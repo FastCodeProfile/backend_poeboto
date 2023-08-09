@@ -1,21 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException
 from loguru import logger
 
-from app.api import deps
-from app.schemas.tasks import TaskSchema, ViewsSchema
+from app.core import deps
+from app.schemas.tasks.subscribers import SubscribersSchema
+from app.schemas.tasks.views import ViewsSchema
 from app.schemas.users import UserSchema
-from app.services.tasks import TasksService
+from app.services.tasks.subscribers import SubscribersService
+from app.services.tasks.views import ViewsService
 
-router = APIRouter()
+router = APIRouter(prefix="/pause")
 
 
-@router.post("/subscribers", response_model=TaskSchema)
+@router.post("/subscribers", response_model=SubscribersSchema)
 async def subscribers(
     task_id: int,
-    tasks_service: TasksService = Depends(deps.subscribers_tasks_service),
+    tasks_service: SubscribersService = Depends(deps.subscribers_service),
     current_user: UserSchema = Depends(deps.get_current_user),
 ):
-    task = await tasks_service.tasks_repo.find_by_id(task_id)
+    task = await tasks_service.tasks_repo.find_task_by_id(task_id)
     if task:
         if task.user_id == current_user.id:
             task = task.to_read_model()
@@ -37,10 +39,10 @@ async def subscribers(
 @router.post("/views", response_model=ViewsSchema)
 async def views(
     task_id: int,
-    tasks_service: TasksService = Depends(deps.views_tasks_service),
+    tasks_service: ViewsService = Depends(deps.views_service),
     current_user: UserSchema = Depends(deps.get_current_user),
 ):
-    task = await tasks_service.tasks_repo.find_by_id(task_id)
+    task = await tasks_service.tasks_repo.find_task_by_id(task_id)
     if task:
         if task.user_id == current_user.id:
             task = task.to_read_model()

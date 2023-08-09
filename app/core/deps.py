@@ -8,12 +8,13 @@ from starlette.exceptions import WebSocketException
 from app.core.config import settings
 from app.repositories.bots import BotsRepository
 from app.repositories.proxies import ProxiesRepository
-from app.repositories.tasks import (SubscribersTasksRepository,
-                                    ViewsTasksRepository)
+from app.repositories.tasks.subscribers import SubscribersRepo
+from app.repositories.tasks.views import ViewsRepo
 from app.repositories.users import UsersRepository
 from app.services.bots import BotsService
 from app.services.proxies import ProxiesService
-from app.services.tasks import TasksService
+from app.services.tasks.subscribers import SubscribersService
+from app.services.tasks.views import ViewsService
 from app.services.users import UsersService
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/users/token")
@@ -31,12 +32,12 @@ def users_service():
     return UsersService(UsersRepository)
 
 
-def subscribers_tasks_service():
-    return TasksService(SubscribersTasksRepository)
+def subscribers_service():
+    return SubscribersService(SubscribersRepo)
 
 
-def views_tasks_service():
-    return TasksService(ViewsTasksRepository)
+def views_service():
+    return ViewsService(ViewsRepo)
 
 
 async def authorization(

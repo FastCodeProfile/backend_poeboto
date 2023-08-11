@@ -2,11 +2,12 @@ from .base import BaseSchema, BaseSchemaAdd, BaseSchemaModel
 
 
 class SubscribersSchema(BaseSchema):
-    pass
+    link: str
+    photo: str
 
 
 class SubscribersSchemaAdd(BaseSchemaAdd):
-    pass
+    link: str
 
 
 class SubscribersSchemaModel(BaseSchemaModel):

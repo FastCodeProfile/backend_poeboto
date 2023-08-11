@@ -1,10 +1,10 @@
-from app.repositories.bots import BotsRepository
+from app.repositories.bots import BotsRepo
 from app.schemas.bots import BotSchemaAdd
 
 
 class BotsService:
-    def __init__(self, bots_repo: BotsRepository):
-        self.bots_repo: BotsRepository = bots_repo()
+    def __init__(self, bots_repo: BotsRepo):
+        self.bots_repo: BotsRepo = bots_repo()
 
     async def add_bot(self, bot: BotSchemaAdd):
         bot_dict = bot.model_dump()

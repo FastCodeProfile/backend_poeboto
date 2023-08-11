@@ -1,11 +1,9 @@
-from app.repositories.skip_bots import SkipBotsRepository
-from app.repositories.tasks.base import TasksRepo
-from app.services.skip_bots import SkipBotsService
+from app.services.use_bots import UseBotsService, UseBotsRepo
+from app.services.chats import ChatsService, ChatsRepo
 
 
 class BaseService:
-    def __init__(self, tasks_repo: TasksRepo):
-        self.tasks_repo: TasksRepo = tasks_repo()
+    tasks_repo: None
 
     async def get_tasks(self):
         tasks = await self.tasks_repo.find_all()
@@ -22,12 +20,12 @@ class BaseService:
         tasks_for_working = []
         tasks = await self.tasks_repo.find_tasks_for_working()
         for task in tasks:
-            existing = await SkipBotsService(
-                SkipBotsRepository
-            ).skip_bots_repo.find_existing(
-                task_name=task.name, task_id=task.id, bot_id=bot_id
-            )
-            if not existing:
-                tasks_for_working.append(task)
+            chats_service = ChatsService(ChatsRepo)
+            chats = await chats_service.get_chats_by_task(task.task, task.id)
+            use_bots_service = UseBotsService(UseBotsRepo)
+            for chat in chats:
+                if not await use_bots_service.existing(chat.id, bot_id):
+                    tasks_for_working.append(task)
+                    break
 
         return tasks_for_working

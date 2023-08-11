@@ -1,7 +1,7 @@
 from loguru import logger
 
 from app.core import deps
-from app.models.proxy import Proxy
+from app.models.proxies import Proxies
 from app.utils.telegram.client import Telegram
 
 
@@ -17,7 +17,7 @@ class BotOnline:
 
         await self.execution_online(proxies[0])
 
-    async def execution_online(self, proxy: Proxy):
+    async def execution_online(self, proxy: Proxies):
         logger.info(f"Выполняю задачу, онлайн ботов.")
         await self.proxies_service.proxies_repo.take(proxy.id)
 

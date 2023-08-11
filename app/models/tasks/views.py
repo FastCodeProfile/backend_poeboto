@@ -16,14 +16,12 @@ class ViewsTask(BaseTask):
         return ViewsSchemaModel(
             id=self.id,
             task=self.task,
-            link=self.link,
             pause=self.pause,
-            avatar=self.avatar,
             count=self.count,
             count_done=self.count_done,
             start_date=self.start_date,
             end_date=self.end_date,
-            done_in_hour=self.done_in_hour,
-            next_start_date=self.next_start_date,
+            last_date_start=self.last_date_start,
+            delay=self.delay,
             limit=self.limit,
         )

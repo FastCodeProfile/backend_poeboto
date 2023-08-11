@@ -5,7 +5,7 @@ from app.db.db import Base
 from app.schemas.proxies import ProxySchema
 
 
-class Proxy(Base):
+class Proxies(Base):
     __tablename__ = "proxies"
 
     id: Mapped[int] = mapped_column(primary_key=True)

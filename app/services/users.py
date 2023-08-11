@@ -1,10 +1,10 @@
-from app.repositories.users import UsersRepository
+from app.repositories.users import UsersRepo
 from app.schemas.users import UserSchemaAdd
 
 
 class UsersService:
-    def __init__(self, users_repo: UsersRepository):
-        self.users_repo: UsersRepository = users_repo()
+    def __init__(self, users_repo: UsersRepo):
+        self.users_repo: UsersRepo = users_repo()
 
     async def add_user(self, user: UserSchemaAdd):
         if not await self.users_repo.find_by_login(user.login):

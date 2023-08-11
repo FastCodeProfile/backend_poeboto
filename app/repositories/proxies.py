@@ -1,11 +1,11 @@
 from sqlalchemy import and_
 
-from app.models.proxy import Proxy
+from app.models.proxies import Proxies
 from app.utils.repository import SQLAlchemyRepository
 
 
-class ProxiesRepository(SQLAlchemyRepository):
-    model = Proxy
+class ProxiesRepo(SQLAlchemyRepository):
+    model = Proxies
 
     async def take(self, proxy_id: int):
         await self.update({"busy": True}, self.model.id == proxy_id)

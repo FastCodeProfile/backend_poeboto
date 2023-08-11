@@ -1,14 +1,12 @@
 from abc import ABC, abstractmethod
 
-from app.repositories.skip_bots import SkipBotsRepository
-from app.services.skip_bots import SkipBotsService
-from app.services.tasks import TasksService
+from app.services.use_bots import UseBotsRepo, UseBotsService
+
 from app.utils.telegram.client import Telegram
 
 
 class ABCTasks(ABC):
-    tasks_service: TasksService
-    skip_bots_service = SkipBotsService(SkipBotsRepository)
+    use_bots_service = UseBotsService(UseBotsRepo)
 
     def __init__(self, client: Telegram, bot_id: int):
         self.client = client

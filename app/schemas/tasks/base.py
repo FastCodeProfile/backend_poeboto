@@ -6,9 +6,7 @@ from pydantic import BaseModel
 class BaseSchema(BaseModel):
     id: int
     task: str
-    link: str
     pause: bool
-    avatar: str
     count: int
     count_done: int
     start_date: datetime
@@ -24,15 +22,14 @@ class BaseSchemaAll(BaseModel):
 
 
 class BaseSchemaAdd(BaseModel):
-    link: str
     count: int
     start_date: datetime
     end_date: datetime
 
 
 class BaseSchemaModel(BaseSchema):
-    done_in_hour: int
-    next_start_date: datetime
+    last_date_start: datetime
+    delay: int
 
 
 class SchemeAllTasks(BaseModel):

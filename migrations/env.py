@@ -11,9 +11,11 @@ from app.db.db import Base
 from app.models.users import Users
 from app.models.tasks.views import ViewsTask
 from app.models.tasks.subscribers import SubscribersTask
+from app.models.tasks.multiple import MultipleTask
 from app.models.bots import Bots
-from app.models.proxy import Proxy
-from app.models.skip_bots import SkipBots
+from app.models.proxies import Proxies
+from app.models.use_bots import UseBots
+from app.models.chats import Chats
 
 
 config = context.config

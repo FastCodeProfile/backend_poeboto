@@ -6,38 +6,43 @@ from jose import JWTError, jwt
 from starlette.exceptions import WebSocketException
 
 from app.core.config import settings
-from app.repositories.bots import BotsRepository
-from app.repositories.proxies import ProxiesRepository
-from app.repositories.tasks.subscribers import SubscribersRepo
-from app.repositories.tasks.views import ViewsRepo
-from app.repositories.users import UsersRepository
-from app.services.bots import BotsService
-from app.services.proxies import ProxiesService
+from app.services.bots import BotsService, BotsRepo
+from app.services.chats import ChatsService, ChatsRepo
+from app.services.proxies import ProxiesService, ProxiesRepo
+from app.services.tasks.multiple import MultipleService
 from app.services.tasks.subscribers import SubscribersService
 from app.services.tasks.views import ViewsService
-from app.services.users import UsersService
+from app.services.users import UsersService, UsersRepo
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/users/token")
 
 
 def bots_service():
-    return BotsService(BotsRepository)
+    return BotsService(BotsRepo)
+
+
+def channels_service():
+    return ChatsService(ChatsRepo)
 
 
 def proxies_service():
-    return ProxiesService(ProxiesRepository)
+    return ProxiesService(ProxiesRepo)
 
 
 def users_service():
-    return UsersService(UsersRepository)
+    return UsersService(UsersRepo)
 
 
 def subscribers_service():
-    return SubscribersService(SubscribersRepo)
+    return SubscribersService()
+
+
+def multiple_service():
+    return MultipleService()
 
 
 def views_service():
-    return ViewsService(ViewsRepo)
+    return ViewsService()
 
 
 async def authorization(

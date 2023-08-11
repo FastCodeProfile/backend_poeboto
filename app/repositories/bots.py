@@ -6,7 +6,7 @@ from app.models.bots import Bots
 from app.utils.repository import SQLAlchemyRepository
 
 
-class BotsRepository(SQLAlchemyRepository):
+class BotsRepo(SQLAlchemyRepository):
     model = Bots
 
     async def update_bot(self, bot, last_call: bool = False):

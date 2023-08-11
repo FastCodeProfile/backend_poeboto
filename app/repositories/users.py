@@ -2,7 +2,7 @@ from app.models.users import Users
 from app.utils.repository import SQLAlchemyRepository
 
 
-class UsersRepository(SQLAlchemyRepository):
+class UsersRepo(SQLAlchemyRepository):
     model = Users
 
     async def update_user(self, user):

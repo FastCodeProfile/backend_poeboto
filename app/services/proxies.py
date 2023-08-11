@@ -1,12 +1,12 @@
 from httpx import AsyncClient, ConnectError, ConnectTimeout, ReadTimeout
 
-from app.repositories.proxies import ProxiesRepository
+from app.repositories.proxies import ProxiesRepo
 from app.schemas.proxies import ProxySchemaAdd
 
 
 class ProxiesService:
-    def __init__(self, proxies_repo: ProxiesRepository):
-        self.proxies_repo: ProxiesRepository = proxies_repo()
+    def __init__(self, proxies_repo: ProxiesRepo):
+        self.proxies_repo: ProxiesRepo = proxies_repo()
 
     async def add_proxy(self, proxy: ProxySchemaAdd):
         proxy_dict = proxy.model_dump()

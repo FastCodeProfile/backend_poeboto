@@ -9,12 +9,14 @@ from app.models.proxies import Proxies
 from app.utils.telegram.client import Telegram
 from ..tasks.subscribers import Subscribers
 from ..tasks.views import Views
+from ..tasks.multiple import Multiple
 
 
 class RunTasks:
     bots_service = deps.bots_service()
     proxies_service = deps.proxies_service()
     views_service = deps.views_service()
+    multiple_service = deps.multiple_service()
     subscribers_service = deps.subscribers_service()
 
     async def run_tasks(self, ctx):
@@ -32,7 +34,8 @@ class RunTasks:
             await self.proxies_service.proxies_repo.take(proxy.id)
             subscribers_tasks = await self.subscribers_service.get_tasks_for_working(bot.id)
             views_tasks = await self.views_service.get_tasks_for_working(bot.id)
-            tg_tasks = subscribers_tasks + views_tasks
+            multiple_tasks = await self.multiple_service.get_tasks_for_working(bot.id)
+            tg_tasks = subscribers_tasks + views_tasks + multiple_tasks
             if not tg_tasks:
                 await self.bots_service.bots_repo.release(bot.id)
                 await self.proxies_service.proxies_repo.release(proxy.id)
@@ -47,6 +50,9 @@ class RunTasks:
 
                     if task.task == "views":
                         await self.views_service.tasks_repo.take(task.id)
+
+                    if task.task == "multiple":
+                        await self.multiple_service.tasks_repo.take(task.id)
 
                 tasks.append(asyncio.create_task(self.execution_tasks(bot, proxy, tg_tasks)))
 
@@ -70,6 +76,10 @@ class RunTasks:
             if task.task == "views":
                 await Views(client, bot.id).execution(task)
                 await self.views_service.tasks_repo.release(task.id)
+
+            if task.task == "multiple":
+                await Multiple(client, bot.id).execution(task)
+                await self.multiple_service.tasks_repo.release(task.id)
 
         await self.bots_service.bots_repo.release(bot.id)
         await self.proxies_service.proxies_repo.release(proxy.id)

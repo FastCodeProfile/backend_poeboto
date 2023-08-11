@@ -9,7 +9,7 @@ from .base import BaseTask
 class MultipleTask(BaseTask):
     __tablename__ = "multiple_task"
 
-    task: Mapped[str] = mapped_column(String(), default="multiple_task")
+    task: Mapped[str] = mapped_column(String(), default="multiple")
     views: Mapped[bool] = mapped_column(Boolean(), default=False)
     reactions: Mapped[bool] = mapped_column(Boolean(), default=False)
 

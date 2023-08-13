@@ -13,20 +13,22 @@ class Views(ABCTasks):
     chats_service = ChatsService(ChatsRepo)
 
     async def execution(self, this_task: ViewsTask):
-        logger.info(f"Выполняю задачу №{this_task.id}, накрутка просмотров.")
+        logger.info(f"Задача №{this_task.id}, накрутка просмотров. - Выполняю...")
 
         try:
             chats = await self.chats_service.get_chats_by_task(this_task.task, this_task.id)
             for chat in chats:
+                logger.info(f"Задача №{this_task.id}, накрутка просмотров. - Просмотров, бот №{self.bot_id}")
                 await self.client.view(chat.link, this_task.limit)
-                this_task.count_done += 1
-                this_task.last_date_start = datetime.now() + timedelta(seconds=this_task.delay)
+                this_task.last_date_start += timedelta(seconds=this_task.delay)
                 await self.use_bots_service.add_use_bot(chat.id, self.bot_id)
-                await self.tasks_service.update_task(this_task.to_read_model())
+
+            this_task.count_done += 1
+            await self.tasks_service.update_task(this_task.to_read_model())
 
         except Exception as err:
-            logger.error(f"Ошибка при выполнении задачи №{this_task.id}: {err}")
+            logger.error(f"Задача №{this_task.id}, накрутка просмотров. - Ошибка: {err}")
 
         finally:
             if this_task.count <= this_task.count_done:
-                logger.success(f"Задача №{this_task.id}. Выполнено.")
+                logger.success(f"Задача №{this_task.id}, накрутка просмотров. - Выполнено.")

@@ -13,20 +13,22 @@ class Subscribers(ABCTasks):
     chats_service = ChatsService(ChatsRepo)
 
     async def execution(self, this_task: SubscribersTask):
-        logger.info(f"Выполняю задачу №{this_task.id}, накрутка подписчиков.")
+        logger.info(f"Задача №{this_task.id}, накрутка подписчиков. - Выполняю...")
 
         try:
             chats = await self.chats_service.get_chats_by_task(this_task.task, this_task.id)
             for chat in chats:
+                logger.info(f"Задача №{this_task.id}, накрутка подписчиков. - Подписка, бот №{self.bot_id}")
                 await self.client.subscribe(chat.link)
-                this_task.count_done += 1
-                this_task.last_date_start = datetime.now() + timedelta(seconds=this_task.delay)
+                this_task.last_date_start += timedelta(seconds=this_task.delay)
                 await self.use_bots_service.add_use_bot(chat.id, self.bot_id)
-                await self.tasks_service.update_task(this_task.to_read_model())
+
+            this_task.count_done += 1
+            await self.tasks_service.update_task(this_task.to_read_model())
 
         except Exception as err:
-            logger.error(f"Ошибка при выполнении задачи №{this_task.id}: {err}")
+            logger.error(f"Задача №{this_task.id}, накрутка подписчиков. - Ошибка: {err}")
 
         finally:
             if this_task.count <= this_task.count_done:
-                logger.success(f"Задача №{this_task.id}. Выполнено.")
+                logger.success(f"Задача №{this_task.id}, накрутка подписчиков. - Выполнено.")

@@ -6,7 +6,7 @@ import httpx
 
 
 async def upload_proxies():
-    host = "http://127.0.0.1:8000/api/v1/proxies/add_proxy"
+    host = "http://127.0.0.1:8000/api/v1/proxy/new"
     workdir = "./proxies/"
     proxies = os.listdir(workdir)
     for proxy in proxies:
@@ -18,7 +18,7 @@ async def upload_proxies():
                 host,
                 json={
                     "scheme": proxy_json["scheme"],
-                    "rotation_url": proxy_json["rotation_url"],
+                    "url": proxy_json["rotation_url"],
                     "ip": proxy_json["ip"],
                     "port": proxy_json["port"],
                     "username": proxy_json["username"],

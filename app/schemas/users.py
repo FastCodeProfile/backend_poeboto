@@ -1,22 +1,22 @@
 from pydantic import BaseModel
 
 
-class UserSchema(BaseModel):
-    id: int
-    login: str
-    balance: float
-    is_super: bool
+class UserScheme(BaseModel):
+    id: int = 0
+    balance: float = 0.00
+    username: str = "username"
+    tasks: list
 
     class Config:
         from_attributes = True
 
 
-class UserSchemaAdd(BaseModel):
-    login: str
-    password: str
+class UserSchemeAdd(BaseModel):
+    username: str = "username"
+    password: str = "password"
 
 
-class UserTokenSchema(BaseModel):
+class UserTokenScheme(BaseModel):
     access_token: str
     token_type: str = "Bearer"
 

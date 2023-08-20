@@ -3,14 +3,11 @@ from pyrogram import Client
 from pyrogram.errors import (AuthKeyDuplicated, AuthKeyUnregistered,
                              UserDeactivatedBan)
 
-from app.schemas.bots import BotSchema
-from app.services.bots import BotsService, BotsRepo
-
 from .methods import Methods
 
 
 class Telegram(Methods):
-    def __init__(self, bot: BotSchema, proxy):
+    def __init__(self, bot, proxy):
         self.bot = bot
         self.proxy = proxy
 
@@ -45,11 +42,7 @@ class Telegram(Methods):
             await app.start()
             return True
         except (AuthKeyUnregistered, UserDeactivatedBan, AuthKeyDuplicated):
-            self.bot.ban = True
             logger.error(f"Бот №{self.bot.id} недоступен.")
-
-        finally:
-            await BotsService(BotsRepo).update_bot(self.bot, last_call=True)
 
     async def stop(self):
         await self.app.stop()

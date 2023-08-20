@@ -2,15 +2,15 @@ from datetime import timedelta
 
 from loguru import logger
 
-from app.core import deps
+from app.core import depends
 from app.models.tasks.multiple import MultipleTask
-from app.services.chats import ChatsService, ChatsRepo
+from app.services.chats import ChatsService
 from .abc import ABCTasks
 
 
 class Multiple(ABCTasks):
-    tasks_service = deps.multiple_service()
-    chats_service = ChatsService(ChatsRepo)
+    tasks_service = depends.multiple_service()
+    chats_service = ChatsService()
 
     async def execution(self, this_task: MultipleTask):
         logger.info(f"Задача №{this_task.id}, множественная. - Выполняю...")

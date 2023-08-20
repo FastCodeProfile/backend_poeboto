@@ -1,15 +1,17 @@
 from fastapi import APIRouter, Depends
 
-from app.core import deps
-from app.schemas.bots import BotSchema, BotSchemaAdd
-from app.services.bots import BotsService
+from app.core import depends
+from app.db import Database
+from app.schemas import BotScheme, BotSchemeAdd
 
 router = APIRouter()
 
 
-@router.post("/add_bot", response_model=BotSchema)
-async def add_bot(
-    bot: BotSchemaAdd,
-    bots_service: BotsService = Depends(deps.bots_service),
+@router.post("/new", response_model=BotScheme)
+async def new(
+    bot: BotSchemeAdd,
+    db: Database = Depends(depends.get_db)
 ):
-    return await bots_service.add_bot(bot)
+    bot = await db.bot.new(**bot.model_dump())
+    await db.session.commit()
+    return BotScheme(**bot.__dict__)

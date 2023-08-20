@@ -2,7 +2,7 @@ import asyncio
 
 from loguru import logger
 
-from app.core import deps
+from app.core import depends
 from app.services.proxies import ProxiesService
 
 
@@ -14,7 +14,7 @@ async def check_proxy(proxies_service: ProxiesService, proxy):
 
 async def run_check_proxies(ctx):
     tasks = []
-    proxies_service = deps.proxies_service()
+    proxies_service = depends.proxies_service()
     for proxy in await proxies_service.get_proxies_non_working():
         task = asyncio.create_task(check_proxy(proxies_service, proxy))
         tasks.append(task)

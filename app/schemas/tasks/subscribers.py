@@ -1,14 +1,9 @@
-from .base import BaseSchema, BaseSchemaAdd, BaseSchemaModel
+from .base_task import BaseScheme, BaseSchemeAdd
 
 
-class SubscribersSchema(BaseSchema):
-    link: str
-    photo: str
+class SubscribersScheme(BaseScheme):
+    pass
 
 
-class SubscribersSchemaAdd(BaseSchemaAdd):
-    link: str
-
-
-class SubscribersSchemaModel(BaseSchemaModel):
+class SubscribersSchemeAdd(BaseSchemeAdd):
     pass

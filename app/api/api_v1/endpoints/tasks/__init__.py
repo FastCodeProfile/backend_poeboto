@@ -1,8 +1,7 @@
 from fastapi import APIRouter
 
-from . import add, get, pause
+from . import subscribers, views
 
 router = APIRouter()
-router.include_router(add.router)
-router.include_router(get.router)
-router.include_router(pause.router)
+router.include_router(subscribers.router)
+router.include_router(views.router)

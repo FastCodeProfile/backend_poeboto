@@ -16,7 +16,10 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def create_access_token(data: dict):
-    data["exp"] = datetime.utcnow() + timedelta(minutes=30)
+def create_access_token(username: str):
+    data = dict(
+        username=username,
+        exp=datetime.utcnow() + timedelta(minutes=120)
+    )
     encoded_jwt = jwt.encode(data, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt

@@ -1,16 +1,16 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from loguru import logger
 
-from app.core import deps
+from app.core import depends
 from app.models.tasks.subscribers import SubscribersTask
-from app.services.chats import ChatsService, ChatsRepo
+from app.services.chats import ChatsService
 from .abc import ABCTasks
 
 
 class Subscribers(ABCTasks):
-    tasks_service = deps.subscribers_service()
-    chats_service = ChatsService(ChatsRepo)
+    tasks_service = depends.subscribers_service()
+    chats_service = ChatsService()
 
     async def execution(self, this_task: SubscribersTask):
         logger.info(f"Задача №{this_task.id}, накрутка подписчиков. - Выполняю...")

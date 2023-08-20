@@ -1,13 +1,13 @@
 from loguru import logger
 
-from app.core import deps
+from app.core import depends
 from app.models.proxies import Proxies
 from app.utils.telegram.client import Telegram
 
 
 class BotOnline:
-    bots_service = deps.bots_service()
-    proxies_service = deps.proxies_service()
+    bots_service = depends.bots_service()
+    proxies_service = depends.proxies_service()
 
     async def run_set_online(self, ctx):
         proxies = await self.proxies_service.get_proxies_for_working()

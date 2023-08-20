@@ -6,7 +6,7 @@ import httpx
 
 
 async def upload_bots():
-    host = "http://127.0.0.1:8000/api/v1/bots/add_bot"
+    host = "http://127.0.0.1:8000/api/v1/bots/new"
     workdir = "./bots/"
     sessions = os.listdir(workdir)
     for session in sessions:

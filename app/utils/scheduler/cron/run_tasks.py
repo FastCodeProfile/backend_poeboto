@@ -3,21 +3,21 @@ from random import shuffle
 
 from loguru import logger
 
-from app.core import deps
+from app.core import depends
 from app.models.bots import Bots
 from app.models.proxies import Proxies
 from app.utils.telegram.client import Telegram
+from ..tasks.multiple import Multiple
 from ..tasks.subscribers import Subscribers
 from ..tasks.views import Views
-from ..tasks.multiple import Multiple
 
 
 class RunTasks:
-    bots_service = deps.bots_service()
-    proxies_service = deps.proxies_service()
-    views_service = deps.views_service()
-    multiple_service = deps.multiple_service()
-    subscribers_service = deps.subscribers_service()
+    bots_service = depends.bots_service()
+    proxies_service = depends.proxies_service()
+    views_service = depends.views_service()
+    multiple_service = depends.multiple_service()
+    subscribers_service = depends.subscribers_service()
 
     async def run_tasks(self, ctx):
         bots = await self.bots_service.get_bots_for_working()
@@ -30,6 +30,7 @@ class RunTasks:
             return
         tasks = []
         for bot, proxy in zip(bots, proxies):
+            logger.info(f"Создана пара: Бот №{bot.id} Прокси №{proxy.id}")
             await self.bots_service.bots_repo.take(bot.id)
             await self.proxies_service.proxies_repo.take(proxy.id)
             subscribers_tasks = await self.subscribers_service.get_tasks_for_working(bot.id)
@@ -63,6 +64,15 @@ class RunTasks:
         if not await client.start():
             await self.bots_service.bots_repo.release(bot.id)
             await self.proxies_service.proxies_repo.release(proxy.id)
+            for task in tasks:
+                if task.task == "subscribers":
+                    await self.subscribers_service.tasks_repo.release(task.id)
+
+                if task.task == "views":
+                    await self.views_service.tasks_repo.release(task.id)
+
+                if task.task == "multiple":
+                    await self.multiple_service.tasks_repo.release(task.id)
             return
 
         for task in tasks:

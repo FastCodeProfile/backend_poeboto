@@ -6,7 +6,7 @@ from app.utils.telegram.client import Telegram
 
 
 class ABCTasks(ABC):
-    use_bots_service = UseBotsService(UseBotsRepo)
+    use_bots_service = UseBotsService()
 
     def __init__(self, client: Telegram, bot_id: int):
         self.client = client

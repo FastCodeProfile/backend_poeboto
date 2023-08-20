@@ -1,13 +1,13 @@
 from pydantic import BaseModel
 
 
-class ProxySchema(BaseModel):
+class ProxyScheme(BaseModel):
     id: int
-    work: bool
-    scheme: str
-    rotation_url: str
+    url: str
+    working: bool
     ip: str
     port: int
+    scheme: str
     username: str
     password: str
 
@@ -15,10 +15,10 @@ class ProxySchema(BaseModel):
         from_attributes = True
 
 
-class ProxySchemaAdd(BaseModel):
-    scheme: str
-    rotation_url: str
+class ProxySchemeAdd(BaseModel):
+    url: str
     ip: str
     port: int
+    scheme: str
     username: str
     password: str

@@ -1,16 +1,9 @@
-from .base import BaseSchema, BaseSchemaAdd, BaseSchemaModel
+from .base_task import BaseScheme, BaseSchemeAdd
 
 
-class ViewsSchema(BaseSchema):
-    limit: int
-    link: str
-    photo: str
+class ViewsScheme(BaseScheme):
+    limit: int = 1
 
 
-class ViewsSchemaAdd(BaseSchemaAdd):
-    limit: int
-    link: str
-
-
-class ViewsSchemaModel(BaseSchemaModel):
-    limit: int
+class ViewsSchemeAdd(BaseSchemeAdd):
+    limit: int = 1

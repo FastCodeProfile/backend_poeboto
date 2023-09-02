@@ -1,34 +1,41 @@
-from datetime import timedelta
-
 from loguru import logger
+from datetime import timedelta
+from datetime import datetime as dt
 
-from app.core import depends
-from app.models.tasks.views import ViewsTask
-from app.services.chats import ChatsService
-from .abc import ABCTasks
+from pyrogram.errors import UsernameNotOccupied
+
+from app.database import Database
+from app.database.models import ViewsTask
+from app.utils.telegram.client import TgClient
 
 
-class Views(ABCTasks):
-    tasks_service = depends.views_service()
-    chats_service = ChatsService()
+async def views(db: Database, task: ViewsTask, client: TgClient):
+    targets = await db.views_target.get_for_working()
+    if not targets:
+        await db.views_task.update(task.id, completed=True)
+        await db.session.commit()
+        logger.success(f"Просмотры: задача №{task.id} завершена!")
+    else:
+        for target in targets:
+            if not target.error:
+                if client.bot_id not in [used_bot.bot_fk for used_bot in target.used_bots]:
+                    try:
+                        await client.view(target.target, task.limit)
+                        target.count_done += 1
+                        await db.views_target.update(target.id, count_done=target.count_done)
+                        await db.views_used_bot.new(client.bot_id, target.id)
+                        await db.session.commit()
+                        logger.info(f"Просмотры: задача №{task.id} "
+                                    f"цель №{target.id} бот №{client.bot_id} - {target.count_done}/{target.count}")
+                    except UsernameNotOccupied:
+                        logger.info(f"Просмотры: задача №{task.id} цель №{target.id} - недоступна.")
+                        await db.views_task.update(task.id, pause=True)
+                        await db.views_target.update(target.id,
+                                                     error="Ссылка на канал была изменена или канал стал непубличным.")
+                        await db.session.commit()
 
-    async def execution(self, this_task: ViewsTask):
-        logger.info(f"Задача №{this_task.id}, накрутка просмотров. - Выполняю...")
-
-        try:
-            chats = await self.chats_service.get_chats_by_task(this_task.task, this_task.id)
-            for chat in chats:
-                logger.info(f"Задача №{this_task.id}, накрутка просмотров. - Просмотров, бот №{self.bot_id}")
-                await self.client.view(chat.link, this_task.limit)
-                this_task.last_date_start += timedelta(seconds=this_task.delay)
-                await self.use_bots_service.add_use_bot(chat.id, self.bot_id)
-
-            this_task.count_done += 1
-            await self.tasks_service.update_task(this_task.to_read_model())
-
-        except Exception as err:
-            logger.error(f"Задача №{this_task.id}, накрутка просмотров. - Ошибка: {err}")
-
-        finally:
-            if this_task.count <= this_task.count_done:
-                logger.success(f"Задача №{this_task.id}, накрутка просмотров. - Выполнено.")
+                else:
+                    continue
+        next_start_date = dt.now()+timedelta(seconds=task.delay)
+        await db.views_task.update(task.id, busy=False, next_start_date=next_start_date)
+        await db.session.commit()

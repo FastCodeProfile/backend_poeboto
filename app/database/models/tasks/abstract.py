@@ -22,6 +22,7 @@ class AbstractTask(Base):
 class AbstractTarget(Base):
     __abstract__ = True
 
+    error: Mapped[str] = mapped_column(sa.String, nullable=True)
     count: Mapped[int] = mapped_column(sa.Integer, nullable=False)
     count_done: Mapped[int] = mapped_column(sa.Integer, default=0)
     target: Mapped[str] = mapped_column(sa.String, nullable=False)

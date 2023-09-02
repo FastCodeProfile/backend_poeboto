@@ -7,6 +7,9 @@ from pydantic import BaseModel
 class TargetScheme(BaseModel):
     photo: str = "Отсутствует"
     target: str = "https://t.me/poeboto"
+    count: int = 1
+    count_done: int = 0
+    error: str | None = "Ошибка..."
 
     class Config:
         from_attributes = True
@@ -14,13 +17,16 @@ class TargetScheme(BaseModel):
 
 class BaseScheme(BaseModel):
     id: int = 0
-    task_type: str = Literal["views", "subscribers"]
-    count: int = 1
-    count_done: int = 0
+    task_type: str = "views"
     start_date: datetime = datetime.now()
     end_date: datetime = datetime.now()
     pause: bool = False
     completed: bool = False
+    before_execution: datetime
+    speed: str
+    count: int
+    count_done: int
+    last_bot: datetime
     targets: list[TargetScheme]
 
     class Config:

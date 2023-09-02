@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.core import depends
+from app.api import depends
 from app.core.config import settings
-from app.db import Database
+from app.database import Database
 from app.schemas import UserScheme, ViewsSchemeAdd, ViewsScheme
 
 router = APIRouter(prefix="/views")

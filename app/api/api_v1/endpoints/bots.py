@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
-from app.core import depends
-from app.db import Database
+from app.api import depends
+from app.database import Database
 from app.schemas import BotScheme, BotSchemeAdd
 
 router = APIRouter()

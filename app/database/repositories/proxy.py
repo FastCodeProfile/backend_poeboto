@@ -1,5 +1,6 @@
 from sqlalchemy import and_
 from sqlalchemy.ext.asyncio import AsyncSession
+from httpx import AsyncClient, TimeoutException
 
 from .abstract import Repository
 from ..models import Proxy
@@ -30,9 +31,18 @@ class ProxyRepo(Repository[Proxy]):
         )
         return new_proxy
 
-    async def get_for_working(self):
-        proxy = await self.get_many(and_(
+    async def get_for_working(self) -> list[Proxy]:
+        proxies = await self.get_many(and_(
             Proxy.working.is_(True),
             Proxy.busy.is_(False),
         ), limit=10)
-        return proxy
+        proxies_ = []
+        for proxy in proxies:
+            try:
+                async with AsyncClient() as client:
+                    await client.get(proxy.url)
+                proxies_.append(proxy)
+            except TimeoutException:
+                await self.update(proxy.id, work=False, busy=False)
+                await self.session.commit()
+        return proxies_

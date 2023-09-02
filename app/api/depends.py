@@ -1,22 +1,22 @@
-from typing import Annotated
-
-from fastapi import Depends, HTTPException, Query, status
+from fastapi import Depends, HTTPException, status, Request, Query
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.exceptions import WebSocketException
 
 from app.core.config import settings
-from app.db import Database
-from app.db.database import engine
+from app.database import Database
+from app.database.database import engine
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/users/token")
 
 
-async def get_db() -> Database:
-    async with AsyncSession(bind=engine) as session:
-        db = Database(session)
-        return db
+async def get_db(request: Request = None) -> Database:
+    if request:
+        return request.state.db
+    else:
+        async with AsyncSession(bind=engine, expire_on_commit=False) as session:
+            return Database(session)
 
 
 async def authorization(token: str, db: Database, credentials_exception):
@@ -33,10 +33,7 @@ async def authorization(token: str, db: Database, credentials_exception):
     return user
 
 
-async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
-    db: Annotated[Database, Depends(get_db)],
-):
+async def get_current_user(token: str = Depends(oauth2_scheme), db: Database = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Не удалось проверить учетные данные",
@@ -45,9 +42,6 @@ async def get_current_user(
     return await authorization(token, db, credentials_exception)
 
 
-async def ws_get_current_user(
-    token: Annotated[str | None, Query()],
-    db: Annotated[Database, Depends(get_db)],
-):
+async def get_current_user_websocket(token: str = Query(), db: Database = Depends(get_db)):
     credentials_exception = WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
     return await authorization(token, db, credentials_exception)

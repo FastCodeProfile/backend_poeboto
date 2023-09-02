@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.core import depends
+from app.api import depends
 from app.core.config import settings
-from app.db import Database
+from app.database import Database
 from app.schemas import UserScheme, SubscribersScheme, SubscribersSchemeAdd
 
 router = APIRouter(prefix="/subscribers")
 
 
-@router.post("/new", response_model=SubscribersScheme)
+@router.post("/new")
 async def new(
     task: SubscribersSchemeAdd,
     db: Database = Depends(depends.get_db),

@@ -2,7 +2,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 
-async def get_avatar(url: str):
+async def get_target_photo(url: str):
     async with httpx.AsyncClient() as client:
         page = await client.get(url)
 

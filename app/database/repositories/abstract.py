@@ -22,7 +22,7 @@ class Repository(Generic[AbstractModel]):
 
     async def get_by_where(self, whereclause) -> AbstractModel | None:
         statement = select(self.type_model).where(whereclause)
-        return (await self.session.execute(statement)).scalar_one_or_none()
+        return (await self.session.execute(statement)).unique().scalar_one_or_none()
 
     async def get_many(
         self, whereclause, limit: int = 100, order_by=None
@@ -31,7 +31,7 @@ class Repository(Generic[AbstractModel]):
         if order_by:
             statement = statement.order_by(order_by)
 
-        return (await self.session.scalars(statement)).all()
+        return (await self.session.scalars(statement)).unique().all()
 
     async def delete(self, whereclause) -> None:
         statement = delete(self.type_model).where(whereclause)

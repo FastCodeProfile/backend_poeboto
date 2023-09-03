@@ -25,5 +25,13 @@ class Methods:
                 GetMessagesViews(peer=channel, id=msg_ids, increment=True)
             )
 
+    async def reaction(self, link: str, reaction: str):
+        msg_id = link.split("/")[-1]
+        if not (link.startswith("https://t.me/joinchat/") or "/+" in link):
+            link = f'@{link.replace(f"/{msg_id}", "").split("https://t.me/")[1]}'
+        target = (await self.app.get_chat(link)).id
+        await self.set_online()
+        await self.app.send_reaction(target, int(msg_id), reaction, big=True)
+
     async def set_online(self):
         await self.app.invoke(UpdateStatus(offline=False))

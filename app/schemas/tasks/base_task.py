@@ -22,7 +22,7 @@ class BaseScheme(BaseModel):
     end_date: datetime = datetime.now()
     pause: bool = False
     completed: bool = False
-    before_execution: datetime
+    before_execution: int = "Времени до завершения в секундах"
     speed: str
     count: int
     count_done: int

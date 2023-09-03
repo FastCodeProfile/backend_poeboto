@@ -39,10 +39,12 @@ class ProxyRepo(Repository[Proxy]):
         proxies_ = []
         for proxy in proxies:
             try:
-                async with AsyncClient() as client:
+                await self.update(proxy.id, busy=True)
+                await self.session.commit()
+                async with AsyncClient(timeout=40) as client:
                     await client.get(proxy.url)
                 proxies_.append(proxy)
             except TimeoutException:
-                await self.update(proxy.id, work=False, busy=False)
+                await self.update(proxy.id, working=False, busy=False)
                 await self.session.commit()
         return proxies_

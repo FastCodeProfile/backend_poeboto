@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api import depends
@@ -24,7 +26,13 @@ async def new(
         for target in task.targets:
             new_task.targets.append(await db.views_target.new(new_task.id, task.count, target))
         await db.session.commit()
-        return ViewsScheme(**new_task.__dict__, task_type="views")
+        before_execution: timedelta = new_task.end_date - new_task.next_start_date
+        speed = f"1 просмотр в {f'{new_task.delay / 60} мин' if new_task.delay >= 60 else f'{new_task.delay} сек'}"
+        last_bot = new_task.next_start_date-timedelta(seconds=new_task.delay)
+        return ViewsScheme(**new_task.__dict__, before_execution=int(before_execution.total_seconds()),
+                           last_bot=last_bot,
+                           count=new_task.targets[0].count, count_done=0,
+                           speed=speed, task_type="views")
     else:
         raise HTTPException(status_code=404, detail="У вас не достаточно средств.")
 

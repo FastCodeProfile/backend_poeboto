@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from .base import Base
 
 if TYPE_CHECKING:
-    from . import ViewsTask, SubscribersTask
+    from . import ViewsTask, SubscribersTask, ReactionsTask
 
 
 class User(Base):
@@ -15,6 +15,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(sa.Text, unique=True, nullable=False)
     password: Mapped[str] = mapped_column(sa.Text, unique=False, nullable=False)
     views: Mapped[list["ViewsTask"]] = orm.relationship(back_populates="user", uselist=True, lazy="joined")
+    reactions: Mapped[list["ReactionsTask"]] = orm.relationship(back_populates="user", uselist=True, lazy="joined")
     subscribers: Mapped[list["SubscribersTask"]] = orm.relationship(back_populates="user", uselist=True, lazy="joined")
 
     def __repr__(self):

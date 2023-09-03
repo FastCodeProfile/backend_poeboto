@@ -7,7 +7,7 @@ from starlette import status
 from app.api import depends
 from app.core.security import create_access_token, get_password_hash, verify_password
 from app.database import Database
-from app.schemas import SubscribersScheme, ViewsScheme, UserScheme, UserSchemeAdd, UserTokenScheme
+from app.schemas import SubscribersScheme, ViewsScheme, UserScheme, UserSchemeAdd, UserTokenScheme, ReactionsScheme
 
 router = APIRouter()
 
@@ -17,20 +17,31 @@ async def get(current_user=Depends(depends.get_current_user)):
     tasks = []
 
     for task in current_user.views:
-        before_execution = task.next_start_date - task.end_date
+        before_execution: timedelta = task.end_date - task.next_start_date
         speed = f"1 просмотр в {f'{task.delay / 60} мин' if task.delay >= 60 else f'{task.delay} сек'}"
         last_bot = task.next_start_date-timedelta(seconds=task.delay)
-        tasks.append(ViewsScheme(**task.__dict__, before_execution=before_execution, last_bot=last_bot,
+        tasks.append(ViewsScheme(**task.__dict__, before_execution=int(before_execution.total_seconds()),
+                                 last_bot=last_bot,
                                  count=task.targets[0].count, count_done=task.targets[0].count_done,
                                  speed=speed, task_type="views"))
 
     for task in current_user.subscribers:
-        before_execution = task.next_start_date - task.end_date
+        before_execution: timedelta = task.end_date - task.next_start_date
         speed = f"1 подписчик в {f'{task.delay / 60} мин' if task.delay >= 60 else f'{task.delay} сек'}"
         last_bot = task.next_start_date-timedelta(seconds=task.delay)
-        tasks.append(SubscribersScheme(**task.__dict__, before_execution=before_execution, last_bot=last_bot,
+        tasks.append(SubscribersScheme(**task.__dict__, before_execution=int(before_execution.total_seconds()),
+                                       last_bot=last_bot,
                                        count=task.targets[0].count, count_done=task.targets[0].count_done,
                                        speed=speed, task_type="subscribers"))
+
+    for task in current_user.reactions:
+        before_execution: timedelta = task.end_date - task.next_start_date
+        speed = f"1 реакция в {f'{task.delay / 60} мин' if task.delay >= 60 else f'{task.delay} сек'}"
+        last_bot = task.next_start_date-timedelta(seconds=task.delay)
+        tasks.append(ReactionsScheme(**task.__dict__, before_execution=int(before_execution.total_seconds()),
+                                    last_bot=last_bot, count=task.targets[0].count,
+                                     count_done=task.targets[0].count_done,
+                                     speed=speed, task_type="reactions"))
 
     return UserScheme(**current_user.__dict__, tasks=tasks)
 

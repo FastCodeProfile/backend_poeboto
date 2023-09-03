@@ -3,6 +3,7 @@ from .bot import Bot
 from .proxy import Proxy
 from .tasks.subscribers import SubscribersTask, SubscribersTarget, SubscribersUsedBot
 from .tasks.views import ViewsTask, ViewsTarget, ViewsUsedBot
+from .tasks.reactions import ReactionsTask, ReactionsTarget, ReactionsUsedBot
 from .user import User
 
 __all__ = (
@@ -15,5 +16,8 @@ __all__ = (
     "Bot",
     "Proxy",
     "ViewsUsedBot",
-    "SubscribersUsedBot"
+    "SubscribersUsedBot",
+    "ReactionsTask",
+    "ReactionsTarget",
+    "ReactionsUsedBot"
 )

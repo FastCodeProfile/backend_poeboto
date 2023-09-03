@@ -1,5 +1,4 @@
-import itertools
-from typing import Iterable
+from asyncio import CancelledError
 
 from loguru import logger
 from pyrogram import Client
@@ -67,7 +66,7 @@ class TgClient(Methods):
             self.app = client
             logger.success(f"Бот №{bot.id} готов к работе!")
             return True
-        except (AuthKeyUnregistered, UserDeactivatedBan, AuthKeyDuplicated):
+        except (AuthKeyUnregistered, UserDeactivatedBan, AuthKeyDuplicated, CancelledError):
             logger.error(f"Бот №{bot.id} недоступен. Меняю бота!")
             await self.db.bot.update(bot.id, busy=False, ban=True)
             await self.db.session.commit()
